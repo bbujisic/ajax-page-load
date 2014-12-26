@@ -1,0 +1,6 @@
+name = Ajax Page Load
+description = Loads any URL using JQuery AJAX load inside div element
+package = jQuery Load
+
+dependencies[] = jquery_ajax_load
+core = 7.x

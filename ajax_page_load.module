@@ -1,0 +1,54 @@
+<?php
+
+/**
+ * Implements hook_init().
+ */
+
+function ajax_page_load_init() {
+  $module_path = drupal_get_path('module', 'ajax_page_load');
+  $apl_trigger = jquery_ajax_load_get_triggers('jquery_ajax_load_trigger_apl', '.ajax_page_load');
+
+  // @todo: Make this a setting!
+  $target = '.main-container';
+
+  drupal_add_js(array(
+    'jquery_ajax_load' => array(
+      'APLtrigger' => $apl_trigger,
+      'APLtarget' => $target,
+    ),
+  ), 'setting');
+  drupal_add_js($module_path . '/ajax_page_load.js');
+}
+
+
+/**
+ * Implementation of hook_menu().
+ */
+function ajax_page_load_menu() {
+  // Admin settings.
+  $items['admin/config/development/ajax_page_load'] = array(
+    'title' => 'Ajax Page Load',
+    'description' => 'Opens pages in existing DOM elements',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ajax_page_load_admin'),
+    'access arguments' => array('administer site configuration'),
+  );
+
+  return $items;
+}
+
+/**
+ * Callback function for admin setting.
+ */
+function ajax_page_load_admin() {
+  // This module will not work if used in overlay paths such as
+  // admin/* , node/add etc if user has overlay access.
+  $form['jquery_ajax_load_trigger_apl'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Valid jQuery Classes/IDs to trigger Ajax Page Load Modal via Ajax (One per line)'),
+    '#default_value' => variable_get('jquery_ajax_load_trigger_apl', '.ajax_page_load' . "\n"),
+    '#description' => t('Specify the class/ID of links to convert that link Ajax Page Load, one per line.'),
+  );
+
+  return system_settings_form($form);
+}
